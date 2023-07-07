@@ -4,19 +4,19 @@ const File=require('../models/book');
 
 router.get('/:uuid', async (req, res)=>{
     try{
+        console.log('look')
         const file=await File.findOne({uuid: req.params.uuid});
-        if(!file){
-            return res.render('download', {error:'file is not found'});
-        }
-        return res.render('download',{
-            uuid:file.uuid,
-            fileName: file.name,
-            fileSize: file.size,
-            download: `${process.env.APP_BASE_URL}/files/download/${file.uuid}`
-            //http://localhost:3000/files/download/jkfd6734-43uusd87-438
+        // if(!file){
+        //     return res.render('read', {error:'file is not found'});
+        // }
+        const filepath=file.path;
+        const fileName="/"+filepath.slice(8,filepath.length)
+        console.log(fileName)
+        return res.render("read",{
+            path: fileName
         });
     }catch(err){
-        return res.render('download', {error : 'somethig went wrong'});
+        return res.render('read', {error : 'somethig went wrong'});
     }
 });
 

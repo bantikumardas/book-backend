@@ -38,6 +38,7 @@ router.post('/', (req, res) => {
         const bookDescription = req.body.bookDescription;
         const userId = req.body.userId;
         const catagory=req.body.catagory;
+        if(!req.file) return res.status(300).json({ error: 'No file is provided' });
         if(!arr.includes(catagory)){
             fs.unlinkSync(req.file.path);
             return res.status(300).json({ error: 'catagory is not from our list' });
@@ -59,15 +60,17 @@ router.post('/', (req, res) => {
         }
 
         // store into database
+        const uuid=uuid4();
         const file = new book({
             name: bookName,
             autherName: autherName,
             publisherName: publisherName,
             catagory: catagory,
             bookDescription: bookDescription,
-            path: `${path.join(__dirname, '../')}${req.file.path}`,
+            path: req.file.path,
             size: req.file.size,
-            uuid: uuid4(),
+            uuid: uuid,
+            readLink:`${process.env.APP_BASE_URL}/reads/${uuid}`,
             userId: userId
         });
 

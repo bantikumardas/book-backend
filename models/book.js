@@ -33,6 +33,8 @@ const book = new mongoose.Schema({
         type: Number,
         required: true
     },
+    uuid:{type: String, required: true},
+    readLink:{type:String, required: true},
     userId: {
         type: String,
         required: true

@@ -1,7 +1,7 @@
 const router=require('express').Router();
 const registration=require('../models/registration');
 const validator = require('validator');
-
+const passwordHash = require('password-hash');
 
 router.post('/', async (req, res)=>{
     console.log(`${req.body.first_name}`);
@@ -12,7 +12,7 @@ router.post('/', async (req, res)=>{
     const password=req.body.password;
     const phone=req.body.phone;
     const user=await registration.find({ email: req.body.email });
-    if(!user){
+    if(user.length>0){
         return res.status(300).send({error:"email already exist"});
     }
     if(!validator.isEmail(email)){
@@ -24,6 +24,7 @@ router.post('/', async (req, res)=>{
     if(!validator.isInt(phone) || phone.length!=10){
         return res.status(300).send({error:"enter a valid phone number"});
     }
+    const hashPassword=passwordHash.generate(password);
     const reg=new registration({
         name: {
             fisrt_name:first_name,
@@ -31,7 +32,7 @@ router.post('/', async (req, res)=>{
             last_name:last_name
         },
         email:email,
-        password:password,
+        password:hashPassword,
         phone:phone
     });
     const response=await reg.save();
